@@ -1,0 +1,36 @@
+version: '3.3'
+services:
+  nginx:
+    container_name: docker_nginx
+    build:
+      context: ./FrontEnd
+      dockerfile: nginx.dockerfile
+    ports:
+      - 80:80
+      - 8081:8081
+  db:
+    container_name: docker_db
+    image: mysql:8.0
+    volumes:
+      - mysqldb:/var/lib/mysql
+    environment:
+      - "MYSQL_DATABASE=meteorologia"
+      - "MYSQL_USER=ikaov"
+      - "MYSQL_PASSWORD=ikaov"
+      - "MYSQL_ROOT_PASSWORD=root"
+    ports:
+      - 3306:3306
+
+  api:
+    container_name: laravel_api
+    build:
+      context: ./proyectoApiBueno
+      dockerfile: api.dockerfile
+    #volumes:
+    #  - ./storage:/var/www/storage
+    env_file: './proyectoApiBueno/.env'
+    depends_on:
+      - db
+
+volumes:
+  mysqldb:
